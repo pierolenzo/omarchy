@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
+if [ "$OMARCHY_DISTRO" != "arch" ]; then
+    echo "This script is Arch Linux specific. Skipping on $OMARCHY_DISTRO."
+    exit 0
+fi
+
 # Overwrite the package configuration for /etc/pacman with the Omarchy default of using its dedicated mirrors and repositories, then update all packages.
 # This is used after switching between Omarchy release channels to ensure the right packages for the right channel are available.
 

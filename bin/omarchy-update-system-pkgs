@@ -2,26 +2,28 @@
 
 set -e
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 echo -e "\e[32m\nUpdate system packages\e[0m"
-sudo pacman -Syyu --noconfirm
+pkg_update_system
 
-# Update AUR packages if any are installed
-if pacman -Qem >/dev/null; then
-  if omarchy-pkg-aur-accessible; then
-    echo -e "\e[32m\nUpdate AUR packages\e[0m"
-    yay -Sua --noconfirm --ignore gcc14,gcc14-libs
-    echo
-  else
-    echo -e "\e[31m\nAUR is unavailable (so skipping updates)\e[0m"
-    echo
-  fi
+# Update AUR packages if any are installed (Arch only)
+if [ "$OMARCHY_DISTRO" == "arch" ]; then
+    if pacman -Qem >/dev/null; then
+      if omarchy-pkg-aur-accessible; then
+        echo -e "\e[32m\nUpdate AUR packages\e[0m"
+        yay -Sua --noconfirm --ignore gcc14,gcc14-libs
+        echo
+      else
+        echo -e "\e[31m\nAUR is unavailable (so skipping updates)\e[0m"
+        echo
+      fi
+    fi
 fi
 
-orphans=$(pacman -Qtdq || true)
-if [[ -n $orphans ]]; then
-  echo -e "\e[32m\nRemove orphan system packages\e[0m"
-  for pkg in $orphans; do
-    sudo pacman -Rs --noconfirm "$pkg" || true
-  done
-  echo
-fi
+echo -e "\e[32m\nRemove orphan system packages\e[0m"
+pkg_remove_orphans
+echo

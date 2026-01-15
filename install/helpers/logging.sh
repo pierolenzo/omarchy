@@ -119,7 +119,8 @@ run_logged() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting: $script" >>"$OMARCHY_INSTALL_LOG_FILE"
 
   # Use bash -c to create a clean subshell
-  bash -c "source '$script'" </dev/null >>"$OMARCHY_INSTALL_LOG_FILE" 2>&1
+  # We invoke the abstraction layer here to ensure functions are available
+  bash -c "source '$OMARCHY_PATH/lib/pkg_abstraction.sh'; source '$script'" </dev/null >>"$OMARCHY_INSTALL_LOG_FILE" 2>&1
 
   local exit_code=$?
 

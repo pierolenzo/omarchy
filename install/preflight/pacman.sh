@@ -1,3 +1,10 @@
+if [ "${OMARCHY_DISTRO:-}" == "gentoo" ]; then
+    pkg_update_system
+    # Ensure build tools are present
+    pkg_install base-devel
+    exit 0
+fi
+
 if [[ -n ${OMARCHY_ONLINE_INSTALL:-} ]]; then
   # Install build tools
   sudo pacman -S --needed --noconfirm base-devel

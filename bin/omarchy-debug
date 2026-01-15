@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 # Return exhaustive debugging information about the system to help diagnose problems.
 
 NO_SUDO=false
@@ -54,7 +59,7 @@ $(journalctl -b -p 4..1)
 =========================================
 INSTALLED PACKAGES
 =========================================
-$({ expac -S '%n %v (%r)' $(pacman -Qqe) 2>/dev/null; comm -13 <(pacman -Sql | sort) <(pacman -Qqe | sort) | xargs -r expac -Q '%n %v (AUR)'; } | sort)
+$(pkg_list_debug_info)
 EOF
 
 if [ "$PRINT_ONLY" = true ]; then

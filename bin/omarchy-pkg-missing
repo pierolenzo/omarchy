@@ -2,10 +2,14 @@
 
 # Returns true if any of the named packages are missing from the system (or false if they're all there).
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 for pkg in "$@"; do
-  if ! pacman -Q "$pkg" &>/dev/null; then
+  if ! pkg_is_installed "$pkg"; then
     exit 0
   fi
 done
-
 exit 1
