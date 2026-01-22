@@ -41,7 +41,7 @@ init_gentoo_map() {
         ["lazygit"]="dev-vcs/lazygit"
         ["lazydocker"]="app-containers/lazydocker"
         ["yq"]="app-misc/yq"
-        ["gum"]="app-shells/gum"
+        ["gum"]="IGNORE"
         ["tldr"]="app-text/tldr"
         ["plocate"]="sys-apps/plocate"
         ["whois"]="net-misc/whois"
