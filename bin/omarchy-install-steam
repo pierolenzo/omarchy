@@ -4,6 +4,11 @@
 
 set -e
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 echo "Now pick dependencies matching your graphics card"
-sudo pacman -S steam
+pkg_install steam
 setsid gtk-launch steam >/dev/null 2>&1 &

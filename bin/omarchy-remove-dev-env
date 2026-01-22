@@ -1,12 +1,17 @@
 #!/bin/bash
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 if [[ -z "$1" ]]; then
   echo "Usage: omarchy-remove-dev-env <ruby|node|bun|deno|go|php|laravel|symfony|python|elixir|phoenix|zig|rust|java|dotnet|ocaml|clojure>" >&2
   exit 1
 fi
 
 remove_php() {
-  sudo pacman -Rns --noconfirm php composer php-sqlite xdebug 2>/dev/null || true
+  pkg_remove php composer php-sqlite xdebug 2>/dev/null || true
 }
 
 case "$1" in
@@ -46,7 +51,7 @@ laravel)
   ;;
 symfony)
   echo -e "Removing Symfony CLI...\n"
-  sudo pacman -Rns --noconfirm symfony-cli 2>/dev/null || true
+  pkg_remove symfony-cli 2>/dev/null || true
   ;;
 python)
   echo -e "Removing Python...\n"

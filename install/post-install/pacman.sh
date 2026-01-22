@@ -1,6 +1,10 @@
 # Configure pacman
 
-if [ "${OMARCHY_DISTRO:-}" != "arch" ]; then
+# Load abstraction layer to be sure about distro
+source "$OMARCHY_INSTALL/../lib/pkg_abstraction.sh"
+
+if [ "$OMARCHY_DISTRO" != "arch" ]; then
+    echo "Skipping pacman configuration on $OMARCHY_DISTRO"
     exit 0
 fi
 

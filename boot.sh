@@ -17,7 +17,15 @@ ansi_art='                 ▄▄▄
 clear
 echo -e "\n$ansi_art\n"
 
-sudo pacman -Syu --noconfirm --needed git
+if [ -f /etc/gentoo-release ] || command -v emerge >/dev/null; then
+    echo "Gentoo detected."
+    if ! command -v git >/dev/null; then
+        echo "Installing git..."
+        sudo emerge --ask=n --verbose dev-vcs/git
+    fi
+else
+    sudo pacman -Syu --noconfirm --needed git
+fi
 
 # Use custom repo if specified, otherwise default to basecamp/omarchy
 OMARCHY_REPO="${OMARCHY_REPO:-basecamp/omarchy}"

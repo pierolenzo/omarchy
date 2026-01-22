@@ -39,7 +39,12 @@ _sudo_cmd() {
 _map_packages() {
     local mapped=()
     for pkg in "$@"; do
-        mapped+=("$(get_mapped_pkg "$pkg")")
+        local mapped_pkg
+        mapped_pkg=$(get_mapped_pkg "$pkg")
+        # Ignore package if mapped to "IGNORE" or empty
+        if [[ "$mapped_pkg" != "IGNORE" && -n "$mapped_pkg" ]]; then
+            mapped+=("$mapped_pkg")
+        fi
     done
     echo "${mapped[@]}"
 }
@@ -48,20 +53,25 @@ _map_packages() {
 # Usage: pkg_install package1 package2 ...
 pkg_install() {
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
-        local packages
-        mapfile -t packages < <(_map_packages "$@")
-        # Gentle hack: if _map_packages returns same line space separated, need to split.
-        # But bash arrays are better passed directly if not calling subshell.
-        
-        # Better approach for array passing:
         local mapped_pkgs=()
         for pkg in "$@"; do
-            mapped_pkgs+=("$(get_mapped_pkg "$pkg")")
+            local mapped_pkg
+            mapped_pkg=$(get_mapped_pkg "$pkg")
+
+            # Skip IGNORED packages
+            if [[ "$mapped_pkg" == "IGNORE" || -z "$mapped_pkg" ]]; then
+                continue
+            fi
+
+            mapped_pkgs+=("$mapped_pkg")
         done
         
-        # Gentoo: using emerge
-        # --noreplace prevents re-installing if already there, similar to --needed
-        _sudo_cmd emerge --ask=n --verbose --noreplace "${mapped_pkgs[@]}"
+        # Only run emerge if there are packages to install
+        if [ ${#mapped_pkgs[@]} -gt 0 ]; then
+            # Gentoo: using emerge
+            # --noreplace prevents re-installing if already there, similar to --needed
+            _sudo_cmd emerge --ask=n --verbose --noreplace "${mapped_pkgs[@]}"
+        fi
     else
         # Arch: using pacman
         _sudo_cmd pacman -S --noconfirm --needed "$@"
@@ -74,10 +84,21 @@ pkg_remove() {
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
         local mapped_pkgs=()
         for pkg in "$@"; do
-            mapped_pkgs+=("$(get_mapped_pkg "$pkg")")
+            local mapped_pkg
+            mapped_pkg=$(get_mapped_pkg "$pkg")
+
+            # Skip IGNORED packages
+            if [[ "$mapped_pkg" == "IGNORE" || -z "$mapped_pkg" ]]; then
+                continue
+            fi
+
+            mapped_pkgs+=("$mapped_pkg")
         done
-        # Gentoo: unmerge
-        _sudo_cmd emerge --ask=n --unmerge "${mapped_pkgs[@]}"
+
+        if [ ${#mapped_pkgs[@]} -gt 0 ]; then
+            # Gentoo: unmerge
+            _sudo_cmd emerge --ask=n --unmerge "${mapped_pkgs[@]}"
+        fi
     else
         # Arch: remove package and unneeded dependencies
         _sudo_cmd pacman -Rns --noconfirm "$@"
@@ -91,18 +112,29 @@ pkg_is_installed() {
     local pkg="$1"
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
         pkg="$(get_mapped_pkg "$pkg")"
+        if [[ "$pkg" == "IGNORE" || -z "$pkg" ]]; then
+            return 1 # Ignored packages are technically not installed in the context of our requirement
+        fi
+
         # Gentoo: check with qlist (app-portage/portage-utils) or equery (app-portage/gentoolkit)
         if command -v qlist >/dev/null; then
             # qlist -I returns installed packages matching the arg
             qlist -I "$pkg" | grep -q .
+        elif command -v eix >/dev/null; then
+            eix -I -e "$pkg"
+        elif command -v equery >/dev/null; then
+            equery list "$pkg" >/dev/null 2>&1
         else
-            # Fallback slow check
-            # emerge --info checks installed db
-            if emerge --info "$pkg" >/dev/null 2>&1; then
-                return 0
-            else
-                return 1
+            # Fallback slow check via emerge
+            # This is slow but reliable for standard atoms
+            if emerge --list-sets | grep -q "^$pkg$"; then
+                 return 0
             fi
+            # Check if directory exists in var db (very rough check for atoms category/package)
+            if [ -d "/var/db/pkg/$pkg" ] || ls -d /var/db/pkg/*/"${pkg##*/}"-[0-9]* >/dev/null 2>&1; then
+                 return 0
+            fi
+            return 1
         fi
     else
         # Arch
@@ -174,7 +206,11 @@ pkg_info() {
     local pkg="$1"
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
         pkg="$(get_mapped_pkg "$pkg")"
-        emerge --search "$pkg"
+        if [[ "$pkg" == "IGNORE" || -z "$pkg" ]]; then
+            echo "Package $1 is ignored on Gentoo."
+        else
+            emerge --search "$pkg"
+        fi
     else
         pacman -Sii "$pkg"
     fi

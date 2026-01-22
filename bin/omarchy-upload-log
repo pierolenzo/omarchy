@@ -2,6 +2,11 @@
 
 # Upload logs to 0x0.st
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 LOG_TYPE="${1:-install}"
 TEMP_LOG="/tmp/upload-log.txt"
 SYSTEM_INFO="/tmp/system-info.txt"
@@ -86,9 +91,9 @@ installed)
   {
     echo ""
     echo "========================================="
-    echo "INSTALLED PACKAGES (pacman -Q)"
+    echo "INSTALLED PACKAGES"
     echo "========================================="
-    pacman -Q 2>/dev/null || echo "Failed to get package list"
+    pkg_list_debug_info 2>/dev/null || echo "Failed to get package list"
   } >>"$TEMP_LOG"
 
   if [ ! -s "$TEMP_LOG" ]; then
