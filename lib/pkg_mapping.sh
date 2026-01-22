@@ -67,7 +67,7 @@ init_gentoo_map() {
         ["ghostty"]="x11-terms/ghostty"
         ["sddm"]="x11-misc/sddm"
         ["plymouth"]="sys-boot/plymouth"
-        ["brightnessctl"]="dev-libs/brightnessctl"
+        ["brightnessctl"]="app-misc/brightnessctl"
         ["playerctl"]="media-sound/playerctl"
         ["grim"]="gui-apps/grim"
         ["slurp"]="gui-apps/slurp"
