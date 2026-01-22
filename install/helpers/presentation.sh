@@ -1,6 +1,12 @@
 # Ensure we have gum available
 if ! command -v gum &>/dev/null; then
-  sudo pacman -S --needed --noconfirm gum
+  if command -v pkg_install &>/dev/null; then
+      pkg_install gum
+  elif [ "$OMARCHY_DISTRO" == "gentoo" ] || command -v emerge >/dev/null; then
+      sudo emerge --ask=n --verbose app-shells/gum
+  else
+      sudo pacman -S --needed --noconfirm gum
+  fi
 fi
 
 # Get terminal size from /dev/tty (works in all scenarios: direct, sourced, or piped)
