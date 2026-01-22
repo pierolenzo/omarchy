@@ -173,7 +173,7 @@ init_gentoo_map() {
 
         # Omarchy specifics / Custom / AUR
         ["1password-beta"]="IGNORE" # AUR
-        ["1password-cli"]="app-admin/1password-cli"
+        ["1password-cli"]="app-misc/1password-cli"
         ["aether"]="IGNORE" # Theme?
         ["asdcontrol"]="IGNORE" # Apple Silicon daemon?
         ["satty"]="gui-apps/satty"
