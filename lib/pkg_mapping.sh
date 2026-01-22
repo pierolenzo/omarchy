@@ -26,7 +26,7 @@ init_gentoo_map() {
         ["yay"]="IGNORE"
         ["pacman-contrib"]="IGNORE"
         ["debtap"]="IGNORE" # Often used in Arch
-        
+
         # Shell & Tools
         ["bat"]="sys-apps/bat"
         ["btop"]="sys-process/btop"
@@ -64,7 +64,7 @@ init_gentoo_map() {
         ["kitty"]="x11-terms/kitty"
         ["alacritty"]="x11-terms/alacritty"
         ["foot"]="x11-terms/foot"
-        ["ghostty"]="x11-terms/ghostty" 
+        ["ghostty"]="x11-terms/ghostty"
         ["sddm"]="x11-misc/sddm"
         ["plymouth"]="sys-boot/plymouth"
         ["brightnessctl"]="dev-libs/brightnessctl"
@@ -74,7 +74,7 @@ init_gentoo_map() {
         ["wl-clipboard"]="gui-apps/wl-clipboard"
         ["cliphist"]="gui-apps/cliphist" # often paired
         ["uwsm"]="gui-apps/uwsm"
-        
+
         # Desktop / Apps
         ["nautilus"]="gnome-base/nautilus"
         ["gnome-disk-utility"]="gnome-extra/gnome-disk-utility"
@@ -121,6 +121,7 @@ init_gentoo_map() {
         ["docker"]="app-containers/docker"
         ["docker-buildx"]="app-containers/docker-buildx"
         ["docker-compose"]="app-containers/docker-compose"
+        ["dotnet-runtime-9.0"]="=dev-dotnet/dotnet-runtime-nugets-9.0.11"
         ["clang"]="sys-devel/clang"
         ["llvm"]="sys-devel/llvm"
         ["rust"]="dev-lang/rust"
@@ -128,7 +129,7 @@ init_gentoo_map() {
         ["luarocks"]="dev-lua/luarocks"
         ["mise"]="dev-util/mise" # Version manager
         ["python-poetry-core"]="dev-python/poetry-core"
-        
+
         # Fonts
         ["noto-fonts"]="media-fonts/noto"
         ["noto-fonts-cjk"]="media-fonts/noto-cjk"
@@ -137,14 +138,14 @@ init_gentoo_map() {
         # Nerd fonts are often split in Gentoo GURU or other overlays
         ["ttf-jetbrains-mono-nerd"]="media-fonts/jetbrains-mono"
         ["ttf-cascadia-mono-nerd"]="media-fonts/cascadia-code"
-        
+
         # Audio / Bluetooth
         ["pipewire"]="media-video/pipewire"
         ["wireplumber"]="media-video/wireplumber"
         ["pamixer"]="media-sound/pamixer"
         ["bluez"]="net-wireless/bluez"
         ["bluetui"]="net-wireless/bluetui"
-        
+
         # Network / Hardware
         ["iwd"]="net-wireless/iwd"
         ["avahi"]="net-dns/avahi"
@@ -158,7 +159,7 @@ init_gentoo_map() {
         ["bolt"]="sys-apps/bolt"
         ["power-profiles-daemon"]="sys-power/power-profiles-daemon"
         ["wireless-regdb"]="net-wireless/wireless-regdb"
-        
+
         # Misc / Libs
         ["xmlstarlet"]="app-text/xmlstarlet"
         ["libyaml"]="dev-libs/libyaml"
@@ -169,7 +170,7 @@ init_gentoo_map() {
         ["fcitx5"]="app-i18n/fcitx"
         ["fcitx5-gtk"]="app-i18n/fcitx-gtk"
         ["fcitx5-qt"]="app-i18n/fcitx-qt"
-        
+
         # Omarchy specifics / Custom / AUR
         ["1password-beta"]="IGNORE" # AUR
         ["1password-cli"]="app-admin/1password-cli"
@@ -189,7 +190,7 @@ init_gentoo_map() {
 # Function to translate a package name
 get_mapped_pkg() {
     local pkg="$1"
-    
+
     # Only map if on Gentoo
     if [ "$OMARCHY_DISTRO" != "gentoo" ]; then
         echo "$pkg"
