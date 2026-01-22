@@ -1,5 +1,12 @@
 if [ "${OMARCHY_DISTRO:-}" == "gentoo" ]; then
     pkg_update_system
+
+    # Configure emerge to automatically unmask packages
+    # This writes changes to /etc/portage/package.* and continues installation
+    if ! grep -q "EMERGE_DEFAULT_OPTS" /etc/portage/make.conf; then
+        echo 'EMERGE_DEFAULT_OPTS="--autounmask=y --autounmask-write --autounmask-continue"' | sudo tee -a /etc/portage/make.conf >/dev/null
+    fi
+
     # Ensure build tools are present
     pkg_install base-devel
     exit 0
