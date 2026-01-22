@@ -65,7 +65,7 @@ pkg_install() {
 
             mapped_pkgs+=("$mapped_pkg")
         done
-        
+
         # Only run emerge if there are packages to install
         if [ ${#mapped_pkgs[@]} -gt 0 ]; then
             # Gentoo: using emerge
@@ -145,7 +145,7 @@ pkg_is_installed() {
 # Update the system
 pkg_update_system() {
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
-        _sudo_cmd emerge --sync
+        _sudo_cmd emaint -a sync
         _sudo_cmd emerge --ask=n --verbose --update --deep --newuse @world
     else
         _sudo_cmd pacman -Syu --noconfirm
