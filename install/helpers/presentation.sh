@@ -1,6 +1,19 @@
 # Ensure we have gum available
 if ! command -v gum &>/dev/null; then
-  sudo pacman -S --needed --noconfirm gum
+  if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
+    if ! command -v go &>/dev/null; then
+      # Install Go if missing
+      sudo emerge --ask=n --verbose dev-lang/go
+    fi
+
+    # Install gum via go
+    go install github.com/charmbracelet/gum@latest
+
+    # Ensure GOPATH bin is in PATH for this session
+    export PATH="$PATH:$(go env GOPATH)/bin"
+  else
+    sudo pacman -S --needed --noconfirm gum
+  fi
 fi
 
 # Get terminal size from /dev/tty (works in all scenarios: direct, sourced, or piped)
