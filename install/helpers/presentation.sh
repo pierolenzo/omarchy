@@ -3,14 +3,7 @@ if ! command -v gum &>/dev/null; then
   if command -v pkg_install &>/dev/null; then
       pkg_install gum
   elif [ "$OMARCHY_DISTRO" == "gentoo" ] || command -v emerge >/dev/null; then
-      # On Gentoo, gum is often best installed via Go if not in main repo
-      if ! command -v go >/dev/null; then
-          echo "Installing Go to build gum..."
-          sudo emerge --ask=n --verbose dev-lang/go
-      fi
-      echo "Installing gum via go..."
-      go install github.com/charmbracelet/gum@latest
-      export PATH="$HOME/go/bin:$PATH"
+      sudo emerge --ask=n --verbose app-shells/gum
   else
       sudo pacman -S --needed --noconfirm gum
   fi
