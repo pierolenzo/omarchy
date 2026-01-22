@@ -7,6 +7,11 @@ if [ "${OMARCHY_DISTRO:-}" == "gentoo" ]; then
         echo 'EMERGE_DEFAULT_OPTS="--autounmask=y --autounmask-write --autounmask-continue"' | sudo tee -a /etc/portage/make.conf >/dev/null
     fi
 
+    # Enable ~amd64 keyword globally for testing packages
+    if ! grep -q "ACCEPT_KEYWORDS" /etc/portage/make.conf; then
+        echo 'ACCEPT_KEYWORDS="~amd64"' | sudo tee -a /etc/portage/make.conf >/dev/null
+    fi
+
     # Ensure build tools are present
     pkg_install base-devel
     exit 0
