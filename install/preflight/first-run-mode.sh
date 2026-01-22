@@ -2,6 +2,12 @@
 mkdir -p ~/.local/state/omarchy
 touch ~/.local/state/omarchy/first-run.mode
 
+# Ensure /etc/sudoers.d exists
+if [ ! -d "/etc/sudoers.d" ]; then
+	sudo mkdir -p /etc/sudoers.d
+	sudo chmod 750 /etc/sudoers.d
+fi
+
 # Setup sudo-less access for first-run
 sudo tee /etc/sudoers.d/first-run >/dev/null <<EOF
 Cmnd_Alias FIRST_RUN_CLEANUP = /bin/rm -f /etc/sudoers.d/first-run
