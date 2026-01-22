@@ -2,13 +2,23 @@
 
 # Add the named packages to the system from the AUR if they're missing. Returns false if it couldn't be done.
 
-if omarchy-pkg-missing "$@"; then
-  yay -S --noconfirm --needed "$@" || exit 1
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
+if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
+    # On Gentoo, try standard install (maybe in overlay)
+    pkg_install "$@" || exit 1
+else
+    if omarchy-pkg-missing "$@"; then
+      yay -S --noconfirm --needed "$@" || exit 1
+    fi
 fi
 
 for pkg in "$@"; do
   # Secondary check to handle states where pacman doesn't actually register an error
-  if ! pacman -Q "$pkg" &>/dev/null; then
+  if ! pkg_is_installed "$pkg"; then
     echo -e "\033[31mError: Package '$pkg' did not install\033[0m" >&2
     exit 1
   fi

@@ -1,14 +1,21 @@
 #!/bin/bash
 set -e
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 # Reinstall all default Omarchy packages from the stable channel and downgrade any packages that are too new.
 
 # Set the package repository to the stable mirrors
 omarchy-refresh-pacman
 
-# Downgrade any packages to the stable setup
-sudo pacman -Suu --noconfirm
+if [ "$OMARCHY_DISTRO" == "arch" ]; then
+    # Downgrade any packages to the stable setup
+    sudo pacman -Suu --noconfirm
+fi
 
 # Ensure all packages are installed
 mapfile -t packages < <(grep -v '^#' "$OMARCHY_PATH/install/omarchy-base.packages" | grep -v '^$')
-sudo pacman -Syu --noconfirm --needed "${packages[@]}"
+pkg_install "${packages[@]}"

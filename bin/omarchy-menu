@@ -4,6 +4,9 @@
 
 export PATH="$HOME/.local/share/omarchy/bin:$PATH"
 
+# Import pkg abstraction
+source "$HOME/.local/share/omarchy/lib/pkg_abstraction.sh"
+
 # Set to true when going directly to a submenu, so we can exit directly
 BACK_TO_EXIT=false
 
@@ -52,15 +55,15 @@ open_in_editor() {
 }
 
 install() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm $2"
+  present_terminal "echo 'Installing $1...'; pkg_install $2"
 }
 
 install_and_launch() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm $2 && setsid gtk-launch $3"
+  present_terminal "echo 'Installing $1...'; pkg_install $2 && setsid gtk-launch $3"
 }
 
 install_font() {
-  present_terminal "echo 'Installing $1...'; sudo pacman -S --noconfirm --needed $2 && sleep 2 && omarchy-font-set '$3'"
+  present_terminal "echo 'Installing $1...'; pkg_install $2 && sleep 2 && omarchy-font-set '$3'"
 }
 
 install_terminal() {
@@ -68,11 +71,21 @@ install_terminal() {
 }
 
 aur_install() {
-  present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2"
+  if [ "$OMARCHY_DISTRO" == "arch" ]; then
+    present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2"
+  else
+    # On Gentoo/others, we try standard install (pkg_install handles mapping/ignore)
+    # as some AUR packages might be in standard repos or overlays.
+    present_terminal "echo 'Installing $1...'; pkg_install $2"
+  fi
 }
 
 aur_install_and_launch() {
-  present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2 && setsid gtk-launch $3"
+  if [ "$OMARCHY_DISTRO" == "arch" ]; then
+    present_terminal "echo 'Installing $1 from AUR...'; yay -S --noconfirm $2 && setsid gtk-launch $3"
+  else
+    present_terminal "echo 'Installing $1...'; pkg_install $2 && setsid gtk-launch $3"
+  fi
 }
 
 show_learn_menu() {
@@ -308,7 +321,7 @@ show_install_editor_menu() {
   case $(menu "Install" "  VSCode\n  Cursor\n  Zed\n  Sublime Text\n  Helix\n  Emacs") in
   *VSCode*) present_terminal omarchy-install-vscode ;;
   *Cursor*) install_and_launch "Cursor" "cursor-bin" "cursor" ;;
-  *Zed*) present_terminal "echo 'Installing Zed...'; sudo pacman -S zed && setsid gtk-launch dev.zed.Zed" ;;
+  *Zed*) present_terminal "echo 'Installing Zed...'; pkg_install zed && setsid gtk-launch dev.zed.Zed" ;;
   *Sublime*) install_and_launch "Sublime Text" "sublime-text-4" "sublime_text" ;;
   *Helix*) install "Helix" "helix" ;;
   *Emacs*) install "Emacs" "emacs-wayland" && systemctl --user enable --now emacs.service ;;

@@ -2,6 +2,11 @@
 
 set -e
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -80,7 +85,7 @@ if [[ "--remove" == "$1" ]]; then
 
   # Uninstall packages
   print_info "Removing FIDO2 packages..."
-  sudo pacman -Rns --noconfirm libfido2 pam-u2f
+  pkg_remove libfido2 pam-u2f
 
   print_success "FIDO2 authentication has been completely removed."
 else
@@ -88,7 +93,7 @@ else
 
   # Install required packages
   print_info "Installing required packages..."
-  sudo pacman -S --noconfirm --needed libfido2 pam-u2f
+  pkg_install libfido2 pam-u2f
 
   if ! check_fido2_hardware; then
     exit 1

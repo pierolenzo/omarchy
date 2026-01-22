@@ -2,13 +2,18 @@
 
 # Install one of the supported development environments. Usually called via Install > Development > * in the Omarchy Menu.
 
+# Load abstraction layer
+OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
+source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
+
 if [[ -z "$1" ]]; then
   echo "Usage: omarchy-install-dev-env <ruby|node|bun|go|laravel|symfony|php|python|elixir|phoenix|rust|java|ocaml|dotnet|clojure>" >&2
   exit 1
 fi
 
 install_php() {
-  sudo pacman -S php composer php-sqlite xdebug --noconfirm
+  pkg_install php composer php-sqlite xdebug
 
   # Install Path for Composer
   if [[ ":$PATH:" != *":$HOME/.config/composer/vendor/bin:"* ]]; then

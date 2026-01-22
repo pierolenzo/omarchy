@@ -20,6 +20,18 @@ else
   channel="$1"
 fi
 
+# Check for Gentoo
+if [ -f /etc/gentoo-release ] || command -v emerge >/dev/null; then
+    echo "Channel management on Gentoo is not yet supported. Please manage via git branch and overlays manually."
+    # We can still switch the git branch if desired, but skip pacman refreshes
+    case "$channel" in
+        "stable"|"edge") omarchy-branch-set "master" ;;
+        "dev") omarchy-branch-set "dev" ;;
+        *) echo "Unknown channel: $channel"; exit 1; ;;
+    esac
+    exit 0
+fi
+
 case "$channel" in
 "stable") omarchy-branch-set "master" && omarchy-refresh-pacman "stable" && sudo pacman -Suu --noconfirm ;;
 "edge") omarchy-branch-set "master" && omarchy-refresh-pacman "edge" ;;
