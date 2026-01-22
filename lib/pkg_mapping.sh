@@ -121,7 +121,7 @@ init_gentoo_map() {
         ["docker"]="app-containers/docker"
         ["docker-buildx"]="app-containers/docker-buildx"
         ["docker-compose"]="app-containers/docker-compose"
-        ["dotnet-runtime-9.0"]="=dev-dotnet/dotnet-runtime-nugets-9.0.11"
+        ["dotnet-runtime-9.0"]="dev-dotnet/dotnet-runtime-nugets"
         ["clang"]="sys-devel/clang"
         ["llvm"]="sys-devel/llvm"
         ["rust"]="dev-lang/rust"
