@@ -74,7 +74,7 @@ pkg_install() {
         fi
     else
         # Arch: using pacman
-        _sudo_cmd pacman -S --noconfirm --needed "$@"
+        _sudo_cmd pacman -S --noconfirm --needed -- "$@"
     fi
 }
 
@@ -101,7 +101,7 @@ pkg_remove() {
         fi
     else
         # Arch: remove package and unneeded dependencies
-        _sudo_cmd pacman -Rns --noconfirm "$@"
+        _sudo_cmd pacman -Rns --noconfirm -- "$@"
     fi
 }
 
@@ -138,7 +138,22 @@ pkg_is_installed() {
         fi
     else
         # Arch
-        pacman -Q "$pkg" >/dev/null 2>&1
+        pacman -Q -- "$pkg" >/dev/null 2>&1
+    fi
+}
+
+# Check if all of the named packages are installed
+# Usage: pkgs_are_installed package1 package2 ...
+# Returns 0 if all are installed, 1 otherwise
+pkgs_are_installed() {
+    if [ "$OMARCHY_DISTRO" == "arch" ]; then
+        pacman -Q -- "$@" >/dev/null 2>&1
+    else
+        # Gentoo or fallback
+        for pkg in "$@"; do
+            pkg_is_installed "$pkg" || return 1
+        done
+        return 0
     fi
 }
 
@@ -212,7 +227,7 @@ pkg_info() {
             emerge --search "$pkg"
         fi
     else
-        pacman -Sii "$pkg"
+        pacman -Sii -- "$pkg"
     fi
 }
 
