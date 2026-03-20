@@ -18,23 +18,7 @@ mkdir -p "$STATE_DIR/skipped"
 for file in ~/.local/share/omarchy/migrations/*.sh; do
   filename=$(basename "$file")
 
-  if [[ ! -f "$STATE_DIR/$filename" && ! -f "$STATE_DIR/skipped/$filename" ]]; then
-
-    # Auto-skip Arch-specific migrations on non-Arch systems
-    if [ "$OMARCHY_DISTRO" != "arch" ]; then
-        if grep -q "pacman" "$file" && ! grep -q "pkg_" "$file"; then
-             echo -e "\e[33m\nSkipping Arch-specific migration ($filename) on $OMARCHY_DISTRO\e[0m"
-             touch "$STATE_DIR/skipped/$filename"
-             continue
-        fi
-        # Also skip migrations editing /etc/pacman.conf directly
-        if grep -q "/etc/pacman.conf" "$file"; then
-             echo -e "\e[33m\nSkipping pacman.conf migration ($filename) on $OMARCHY_DISTRO\e[0m"
-             touch "$STATE_DIR/skipped/$filename"
-             continue
-        fi
-    fi
-
+  if [[ ! -f $STATE_DIR/$filename && ! -f $STATE_DIR/skipped/$filename ]]; then
     echo -e "\e[32m\nRunning migration (${filename%.sh})\e[0m"
 
     if bash $file; then

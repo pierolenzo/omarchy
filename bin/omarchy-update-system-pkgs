@@ -8,22 +8,4 @@ OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
 source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
 
 echo -e "\e[32m\nUpdate system packages\e[0m"
-pkg_update_system
-
-# Update AUR packages if any are installed (Arch only)
-if [ "$OMARCHY_DISTRO" == "arch" ]; then
-    if pacman -Qem >/dev/null; then
-      if omarchy-pkg-aur-accessible; then
-        echo -e "\e[32m\nUpdate AUR packages\e[0m"
-        yay -Sua --noconfirm --ignore gcc14,gcc14-libs
-        echo
-      else
-        echo -e "\e[31m\nAUR is unavailable (so skipping updates)\e[0m"
-        echo
-      fi
-    fi
-fi
-
-echo -e "\e[32m\nRemove orphan system packages\e[0m"
-pkg_remove_orphans
-echo
+sudo pacman -Syyu --noconfirm

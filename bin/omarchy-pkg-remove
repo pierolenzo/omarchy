@@ -22,6 +22,8 @@ fzf_args=(
 pkg_names=$(pkg_list_installed | fzf "${fzf_args[@]}")
 
 if [[ -n "$pkg_names" ]]; then
+  # Convert newline-separated selections to space-separated for yay
+  # echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -Rns --noconfirm
   # Convert to array
   mapfile -t selected_pkgs <<< "$pkg_names"
   pkg_remove "${selected_pkgs[@]}"
