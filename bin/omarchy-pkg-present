@@ -7,8 +7,7 @@ OMARCHY_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OMARCHY_LIB_DIR="$(cd "$OMARCHY_BIN_DIR/../lib" && pwd)"
 source "$OMARCHY_LIB_DIR/pkg_abstraction.sh"
 
-for pkg in "$@"; do
-  pkg_is_installed "$pkg" || exit 1
-done
-
-exit 0
+if pkgs_are_installed "$@"; then
+  exit 0
+fi
+exit 1

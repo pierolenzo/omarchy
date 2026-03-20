@@ -142,6 +142,21 @@ pkg_is_installed() {
     fi
 }
 
+# Check if all of the named packages are installed
+# Usage: pkgs_are_installed package1 package2 ...
+# Returns 0 if all are installed, 1 otherwise
+pkgs_are_installed() {
+    if [ "$OMARCHY_DISTRO" == "arch" ]; then
+        pacman -Q "$@" >/dev/null 2>&1
+    else
+        # Gentoo or fallback
+        for pkg in "$@"; do
+            pkg_is_installed "$pkg" || return 1
+        done
+        return 0
+    fi
+}
+
 # Update the system
 pkg_update_system() {
     if [ "$OMARCHY_DISTRO" == "gentoo" ]; then
